@@ -252,8 +252,8 @@ MonoBehaviour:
       Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
   m_text: "\u5B64\u72EC\u306E\u5302\u3044"
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: dcbea2319a5b34ccf8633b212f1c49d8, type: 2}
-  m_sharedMaterial: {fileID: 21511215369712614, guid: dcbea2319a5b34ccf8633b212f1c49d8,
+  m_fontAsset: {fileID: 11400000, guid: 9671e616d76184f08a97658ca0403efd, type: 2}
+  m_sharedMaterial: {fileID: 21600860935750254, guid: 9671e616d76184f08a97658ca0403efd,
     type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
@@ -323,11 +323,11 @@ MonoBehaviour:
     characterCount: 5
     spriteCount: 0
     spaceCount: 0
-    wordCount: 2
+    wordCount: 1
     linkCount: 0
     lineCount: 1
     pageCount: 1
-    materialCount: 2
+    materialCount: 1
   m_havePropertiesChanged: 0
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
