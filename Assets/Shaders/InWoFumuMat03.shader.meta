@@ -2,7 +2,9 @@ fileFormatVersion: 2
 guid: c173677cc5213fd4891b1d3a0b77a71e
 ShaderImporter:
   externalObjects: {}
-  defaultTextures: []
+  defaultTextures:
+  - _TouchPattern: {fileID: 2800000, guid: ff0178fd9ead54e8ea4c3c9abae4755f, type: 3}
+  - _BeatPattern: {fileID: 2800000, guid: 5784bd170c4d34e9ea13515420b56c52, type: 3}
   nonModifiableTextures: []
   userData: 
   assetBundleName: 

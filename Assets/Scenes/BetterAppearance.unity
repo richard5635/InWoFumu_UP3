@@ -736,7 +736,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 5497897845470723807}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 0}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 22bd4fc8b0bac45d8bf534b0df4cd87e, type: 3}
   m_Name: 
@@ -840,6 +840,16 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: SerialHandler
+      objectReference: {fileID: 0}
+    - target: {fileID: 5497897846899132689, guid: 958a5dea3735c42349b404d129376a8e,
+        type: 3}
+      propertyPath: portName
+      value: /dev/cu.usbmodem144201
+      objectReference: {fileID: 0}
+    - target: {fileID: 5497897846899132689, guid: 958a5dea3735c42349b404d129376a8e,
+        type: 3}
+      propertyPath: m_Enabled
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5497897846899132690, guid: 958a5dea3735c42349b404d129376a8e,
         type: 3}
@@ -1030,11 +1040,26 @@ PrefabInstance:
       propertyPath: FrontDisplay
       value: 
       objectReference: {fileID: 708205646}
+    - target: {fileID: 5690953881850742741, guid: be9ae34dc07104e698dd90226d51c7a6,
+        type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 5690953881850742740, guid: be9ae34dc07104e698dd90226d51c7a6,
         type: 3}
       propertyPath: FrontDisplay
       value: 
       objectReference: {fileID: 708205646}
+    - target: {fileID: 5690953881850742740, guid: be9ae34dc07104e698dd90226d51c7a6,
+        type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5690953881850742740, guid: be9ae34dc07104e698dd90226d51c7a6,
+        type: 3}
+      propertyPath: linkIdForEach.Array.data[1]
+      value: 4
+      objectReference: {fileID: 0}
     - target: {fileID: 5690953881475412351, guid: be9ae34dc07104e698dd90226d51c7a6,
         type: 3}
       propertyPath: m_havePropertiesChanged

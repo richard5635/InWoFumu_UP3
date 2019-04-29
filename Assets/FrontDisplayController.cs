@@ -31,7 +31,7 @@ public class FrontDisplayController : MonoBehaviour
     // Phrase Display Positions
     int xPos = 978;
     int yPos = -300;
-    int xSpan = -48;
+    int xSpan = -32;
 
     // Movement Parameters
     float xMovement = 10.0f;
@@ -41,6 +41,8 @@ public class FrontDisplayController : MonoBehaviour
     bool isHighlighted = false;
     public Color32 HighlightColor;
     [HideInInspector] public bool isBusy = false;
+    [SerializeField] Color32[] HighLightColors = new Color32[4];
+    int count = 0;
 
 
     private void Awake()
@@ -90,7 +92,7 @@ public class FrontDisplayController : MonoBehaviour
 
         // Slide phrases
         Debug.Log("PhraseObjects length = " + PhraseObjects.Count);
-        if(PhraseObjects.Count > 0)coroutine = StartCoroutine(SlidePhrases(0.25f));
+        if(PhraseObjects.Count > 0)coroutine = StartCoroutine(SlidePhrases(0.1f));
         else if(PhraseObjects.Count == 0) coroutine = StartCoroutine(UpdateTexts());
 
         // Make IEnumerator to display the list, find a way to sync the list and the instantiated obejcts
@@ -109,9 +111,10 @@ public class FrontDisplayController : MonoBehaviour
         Debug.Log("Sliding Phrase");
         float t = 0;
         float curvePercent = 0;
+        float res = 0.01f;
         while (t < duration)
         {
-            t += Time.deltaTime;
+            t += res;
             for (int i = 0; i < PhraseObjects.Count; i++)
             {
                 // Slide with curve speed
@@ -125,7 +128,7 @@ public class FrontDisplayController : MonoBehaviour
                 Vector2 target = PhraseObjects[i].GetComponent<RectTransform>().anchoredPosition + new Vector2(xSpan, 0);
                 PhraseObjects[i].GetComponent<RectTransform>().anchoredPosition = Vector2.LerpUnclamped(origin, target, curvePercent);
             }
-            yield return null;
+            yield return new WaitForSeconds(res);
         }
         coroutine = StartCoroutine(UpdateTexts());
         yield return null;
@@ -223,7 +226,9 @@ public class FrontDisplayController : MonoBehaviour
     {
         Color32 c;
 
-        c = new Color32((byte)Random.Range(25, 255), (byte)Random.Range(25, 255), (byte)Random.Range(25, 255), 255);
+        // c = new Color32((byte)Random.Range(25, 255), (byte)Random.Range(25, 255), (byte)Random.Range(25, 255), 255);
+        c = HighLightColors[count % 4];
+        count++;
 
         return c;
     }
