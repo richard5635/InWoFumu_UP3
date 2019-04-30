@@ -40,11 +40,11 @@ public class DebugModeController : MonoBehaviour
 
     // InWoFumu mats
     [SerializeField] List<int> idForEach = new List<int> { 0, 2, 0, 0, 0, 0, 0 };
-    [SerializeField] List<int> linkIdForEach = new List<int>{0,4,0,0,0,0,0};//params[9]候補になるフレーズがその本に描かれる
-    
+    [SerializeField] List<int> linkIdForEach = new List<int> { 0, 4, 0, 0, 0, 0, 0 };//params[9]候補になるフレーズがその本に描かれる
+
     int steppedPhraseID;
     int steppedTableID;
-    List<int> previousId = new List<int>{0,0,0,4};
+    List<int> previousId = new List<int> { 0, 0, 0, 4 };
 
     public List<List<int>> place_dict = new List<List<int>> {
         new List<int>{1,2,3},
@@ -69,7 +69,7 @@ public class DebugModeController : MonoBehaviour
         // Do reading of csv files
         // Define csv file names
         phrase_csv = "phrase_csv";
-        phrase2phrase = "test_phrase2phrase_ver12_with_next_search_index";
+        phrase2phrase = "phrase2phrase_ver10_kai";
 
         // Process of moving csv data into List
         //phrase_csv to csvDatas
@@ -92,7 +92,7 @@ public class DebugModeController : MonoBehaviour
             csvDatas2.Add(line.Split(','));
             height++;
         }
-        
+
         csvDatas2.RemoveAt(0);
         Debug.Log("csvDatas2[0][0]=" + csvDatas2[0][0]);
 
@@ -105,28 +105,34 @@ public class DebugModeController : MonoBehaviour
         // Debug.Log("Audio file name: " + csvDatas2[1][16]);
         for (int i = 1; i < csvDatas2.Count; i++)
         {
-            // Debug.Log("sound name is" + csvDatas[i][6]);            
+            // Debug.Log("sound name is" + csvDatas[i][16]);            
             // AudioClip audio = Resources.Load("Sound/" + csvDatas[i][6].Remove(csvDatas[i][6].Length - 4), typeof(AudioClip)) as AudioClip;
-            AudioClip audio = Resources.Load("Sound/" + csvDatas2[i][16], typeof(AudioClip)) as AudioClip;//phrase2phraseのidから音源をとった場合
+            AudioClip audio = Resources.Load("Sound/" + csvDatas2[i][17], typeof(AudioClip)) as AudioClip;//phrase2phraseのidから音源をとった場合
             sounds.Add(audio);
             // Debug.Log(sounds[i-1]);
         }
-        for (int i = 0; i < linkIdForEach.Count; i++)
-        {
-            if(linkIdForEach[i]!=0){
-                steppedPhraseID = linkIdForEach[i];
-                transform.GetChild(0).GetChild(i).gameObject.GetComponent<Image>().sprite = Square;
-                transform.GetChild(0).GetChild(i).gameObject.GetComponent<Animator>().SetInteger("State", 2);
-                transform.GetChild(0).GetChild(i).GetChild(0).gameObject.GetComponent<TextMeshProUGUI>().text = csvDatas2[linkIdForEach[i]][10];  
-                FrontDisplay.AcceptPhrase(csvDatas2[steppedPhraseID][3], csvDatas2[steppedPhraseID][2], csvDatas2[steppedPhraseID][7], csvDatas2[steppedPhraseID][8]);
-            }
-        }
+
+
     }
 
     void Start() // Might change to onEnable
     {
         // Start the initial level. 2?
-
+        // Display First Phrase
+        
+        for (int i = 0; i < linkIdForEach.Count; i++)
+        {
+            Books[i].GetComponent<BookShaderController>().InitializeMat03Bg();
+            if (linkIdForEach[i] != 0)
+            {
+                steppedPhraseID = linkIdForEach[i];
+                transform.GetChild(0).GetChild(i).gameObject.GetComponent<Image>().sprite = Square;
+                transform.GetChild(0).GetChild(i).gameObject.GetComponent<Animator>().SetInteger("State", 2);
+                Books[i].GetComponent<BookShaderController>().Mat03State(2);
+                transform.GetChild(0).GetChild(i).GetChild(0).gameObject.GetComponent<TextMeshProUGUI>().text = csvDatas2[linkIdForEach[i]][10];
+                FrontDisplay.AcceptPhrase(csvDatas2[steppedPhraseID][3], csvDatas2[steppedPhraseID][6], csvDatas2[steppedPhraseID][7], csvDatas2[steppedPhraseID][8]);
+            }
+        }
     }
 
     // Update is called once per frame
@@ -134,33 +140,33 @@ public class DebugModeController : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.N))
         {
-            if(!FrontDisplay.isBusy)SteppedOn(0);
+            if (!FrontDisplay.isBusy) SteppedOn(0);
             Debug.Log("n down");
         }
         else if (Input.GetKeyDown(KeyCode.M))
         {
-            if(!FrontDisplay.isBusy)SteppedOn(1);
+            if (!FrontDisplay.isBusy) SteppedOn(1);
         }
         else if (Input.GetKeyDown(KeyCode.H))
         {
-            if(!FrontDisplay.isBusy)SteppedOn(2);
+            if (!FrontDisplay.isBusy) SteppedOn(2);
         }
         else if (Input.GetKeyDown(KeyCode.J))
         {
-            if(!FrontDisplay.isBusy)SteppedOn(3);
+            if (!FrontDisplay.isBusy) SteppedOn(3);
         }
         else if (Input.GetKeyDown(KeyCode.K))
         {
-            if(!FrontDisplay.isBusy)SteppedOn(4);
+            if (!FrontDisplay.isBusy) SteppedOn(4);
             Debug.Log("k down");
         }
         else if (Input.GetKeyDown(KeyCode.U))
         {
-            if(!FrontDisplay.isBusy)SteppedOn(5);
+            if (!FrontDisplay.isBusy) SteppedOn(5);
         }
         else if (Input.GetKeyDown(KeyCode.I))
         {
-            if(!FrontDisplay.isBusy)SteppedOn(6);
+            if (!FrontDisplay.isBusy) SteppedOn(6);
         }
     }
 
@@ -169,9 +175,9 @@ public class DebugModeController : MonoBehaviour
         List<int> linkTableId = new List<int>();
 
         Debug.Log("Stepped on book" + num + ".");
-        
+
         // Check the number on the book
-        if(linkIdForEach[num] == 0) return;
+        if (linkIdForEach[num] == 0) return;
 
         // steppedID = idForEach[num];
         steppedPhraseID = linkIdForEach[num];//phrase2phraseのidから取得する場合
@@ -186,19 +192,21 @@ public class DebugModeController : MonoBehaviour
         // Check related phrases, access 
         // Makes a link between stepped phrase and candidates
         // List<List<int>> next_phrases = new List<List<int>>();//{{次表示するフレーズのID(phrase_csv),それを出すために参照したphrase2phrase_csvのID},{,},,,}
-        string next_string = csvDatas2[steppedPhraseID][22].Trim( new char[] { '"' });
+        string next_string = csvDatas2[steppedPhraseID][22].Trim(new char[] { '"' });
         List<int> nextPhraseIds = new List<int>();
-        Debug.Log("next_string="+next_string);
+        Debug.Log("next_string=" + next_string);
         nextPhraseIds = next_string.Split(':').ToList().ConvertAll(int.Parse);
         //nextPhraseIds.Add(int.Parse(next_string.Trim);
         HashSet<int> hsPrev = new HashSet<int>(previousId);
-        for(int i = nextPhraseIds.Count -1 ; i>=0 ; i--){
-            if(previousId.Contains(int.Parse(csvDatas2[nextPhraseIds[i]][9]))){
+        for (int i = nextPhraseIds.Count - 1; i >= 0; i--)
+        {
+            if (previousId.Contains(int.Parse(csvDatas2[nextPhraseIds[i]][9])))
+            {
                 nextPhraseIds.Remove(nextPhraseIds[i]);
             }
         }
         //nextPhraseIds.RemoveAll(s=>csvDatas2[s][10].Exists(p => previousId[p].Contains));
-        
+
         //ランダム抽出の準備
         // System.Random r = new System.Random((int)DateTime.Now.Ticks);
         // int tableID;
@@ -226,6 +234,7 @@ public class DebugModeController : MonoBehaviour
                         nextPhraseIds.RemoveAt(j);
 
                         transform.GetChild(0).GetChild(i).gameObject.GetComponent<Animator>().SetInteger("State", 3);
+                        Books[i].GetComponent<BookShaderController>().Mat03State(3);
                         Debug.Log(i + ":change");
 
                         Debug.Log("rand:" + j);
@@ -234,17 +243,19 @@ public class DebugModeController : MonoBehaviour
                     {
                         transform.GetChild(0).GetChild(i).gameObject.GetComponent<Image>().sprite = Square;
                         transform.GetChild(0).GetChild(i).gameObject.GetComponent<Animator>().SetInteger("State", 4);
+                        Books[i].GetComponent<BookShaderController>().Mat03State(4);
                         Debug.Log(i + ":dissappear");
                         // idForEach[i] = 0;
                         linkIdForEach[i] = 0;
                     }
 
-                    Debug.Log("rand : " + Random.Range(0,nextPhraseIds.Count));
+                    Debug.Log("rand : " + Random.Range(0, nextPhraseIds.Count));
                 }
                 else//次はださない、つまり消す
                 {
                     transform.GetChild(0).GetChild(i).gameObject.GetComponent<Image>().sprite = Square;
                     transform.GetChild(0).GetChild(i).gameObject.GetComponent<Animator>().SetInteger("State", 4);
+                    Books[i].GetComponent<BookShaderController>().Mat03State(4);
                     Debug.Log(i + ":dissappear");
                     // idForEach[i] = 0;
                     linkIdForEach[i] = 0;
@@ -266,6 +277,7 @@ public class DebugModeController : MonoBehaviour
 
                     transform.GetChild(0).GetChild(i).gameObject.GetComponent<Image>().sprite = Square;
                     transform.GetChild(0).GetChild(i).gameObject.GetComponent<Animator>().SetInteger("State", 2);
+                    Books[i].GetComponent<BookShaderController>().Mat03State(2);
                     Debug.Log(i + ":appear");
 
                     Debug.Log("rand:" + j);
@@ -295,10 +307,10 @@ public class DebugModeController : MonoBehaviour
         // Debug.Log(linked_phrase_FD[0]+ " and "+linked_phrase_FD[1]);
 
         //string[] rhymePos = FindRhymePositions(linked_phrase_FD[0], linked_phrase_FD[1]);
-        
+
         //Definition in FrontDisplayController.cs:AcceptPhrase(string kana, string kanji, string author, string title, string rhyme_pos_c, string rhyme_pos_p)
-        string[] rhymePos = {csvDatas2[steppedPhraseID][5],csvDatas2[steppedPhraseID][13]};//phrase,linked
-        FrontDisplay.AcceptPhrase(csvDatas2[steppedPhraseID][11], csvDatas2[steppedPhraseID][10], csvDatas2[steppedPhraseID][15], csvDatas2[steppedPhraseID][16],rhymePos[1], rhymePos[0]);
+        string[] rhymePos = { csvDatas2[steppedPhraseID][5], csvDatas2[steppedPhraseID][13] };//phrase,linked
+        FrontDisplay.AcceptPhrase(csvDatas2[steppedPhraseID][11], csvDatas2[steppedPhraseID][14], csvDatas2[steppedPhraseID][15], csvDatas2[steppedPhraseID][16], rhymePos[1], rhymePos[0]);
 
         previousId.RemoveAt(0);
         previousId.Add(int.Parse(csvDatas2[steppedPhraseID][9]));
@@ -331,10 +343,10 @@ public class DebugModeController : MonoBehaviour
     {
         string ids = id.ToString();
         // Loop 
-        for(int i = 1; i < csvDatas2.Count; i++)
+        for (int i = 1; i < csvDatas2.Count; i++)
         {
             // Always returns the first that appears on the list
-            if(csvDatas2[i][0] == ids) return i;
+            if (csvDatas2[i][0] == ids) return i;
         }
         return 0;
     }
@@ -396,4 +408,5 @@ public class DebugModeController : MonoBehaviour
 
         return;
     }
+
 }

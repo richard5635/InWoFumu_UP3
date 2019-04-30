@@ -31,7 +31,7 @@ public class FrontDisplayController : MonoBehaviour
     // Phrase Display Positions
     int xPos = 978;
     int yPos = -300;
-    int xSpan = -32;
+    int xSpan = 32;
 
     // Movement Parameters
     float xMovement = 10.0f;
@@ -67,8 +67,8 @@ public class FrontDisplayController : MonoBehaviour
 
         // Slide phrases
         Debug.Log("PhraseObjects length = " + PhraseObjects.Count);
-        if(PhraseObjects.Count > 0)coroutine = StartCoroutine(SlidePhrases(0.25f));
-        else if(PhraseObjects.Count == 0) coroutine = StartCoroutine(UpdateTexts());
+        if (PhraseObjects.Count >= 4) coroutine = StartCoroutine(SlidePhrases(0.25f));
+        else coroutine = StartCoroutine(UpdateTexts());
 
         // Make IEnumerator to display the list, find a way to sync the list and the instantiated obejcts
 
@@ -92,8 +92,8 @@ public class FrontDisplayController : MonoBehaviour
 
         // Slide phrases
         Debug.Log("PhraseObjects length = " + PhraseObjects.Count);
-        if(PhraseObjects.Count > 0)coroutine = StartCoroutine(SlidePhrases(0.1f));
-        else if(PhraseObjects.Count == 0) coroutine = StartCoroutine(UpdateTexts());
+        if (PhraseObjects.Count >= 4) coroutine = StartCoroutine(SlidePhrases(0.1f));
+        else coroutine = StartCoroutine(UpdateTexts());
 
         // Make IEnumerator to display the list, find a way to sync the list and the instantiated obejcts
 
@@ -119,7 +119,7 @@ public class FrontDisplayController : MonoBehaviour
             {
                 // Slide with curve speed
                 // Refer to https://medium.com/@rhysp/lerping-with-coroutines-and-animation-curves-4185b30f6002
-                
+
                 float percent = Mathf.Clamp01(t / duration);
                 curvePercent = AnimationCurve.Evaluate(percent);
 
@@ -137,24 +137,38 @@ public class FrontDisplayController : MonoBehaviour
     IEnumerator UpdateTexts()
     {
         // Slide
-
         // Delete excess
         if (PhraseObjects.Count == 4)
         {
             Destroy(PhraseObjects[0]);
             PhraseObjects.Remove(PhraseObjects[0]);
         }
-        
+
         // Add text
         PhraseObjects.Add(Instantiate(PhraseTemplate, transform));
-        PhraseObjects[PhraseObjects.Count-1].transform.SetAsFirstSibling();
-        PhraseObjects[PhraseObjects.Count-1].name = c_kanji;
-        for (int i = 0; i < PhraseObjects[PhraseObjects.Count-1].transform.childCount; i++)
+        PhraseObjects[PhraseObjects.Count - 1].transform.SetAsFirstSibling();
+        PhraseObjects[PhraseObjects.Count - 1].name = c_kanji;
+
+        PhraseObjects[PhraseObjects.Count - 1].GetComponent<RectTransform>().anchoredPosition = new Vector2(
+            PhraseObjects[PhraseObjects.Count - 1].GetComponent<RectTransform>().anchoredPosition.x - (xSpan * 8 * (PhraseObjects.Count-1)),
+            PhraseObjects[PhraseObjects.Count - 1].GetComponent<RectTransform>().anchoredPosition.y
+        );
+
+        for (int i = 0; i < PhraseObjects[PhraseObjects.Count - 1].transform.childCount; i++)
         {
-            if (i == 0) PhraseObjects[PhraseObjects.Count-1].transform.GetChild(i).GetComponent<TextMeshProUGUI>().text = c_kana;
-            else if (i == 1) PhraseObjects[PhraseObjects.Count-1].transform.GetChild(i).GetComponent<TextMeshProUGUI>().text = c_kanji;
-            else if (i == 2) PhraseObjects[PhraseObjects.Count-1].transform.GetChild(i).GetComponent<TextMeshProUGUI>().text = c_author;
-            else if (i == 3) PhraseObjects[PhraseObjects.Count-1].transform.GetChild(i).GetComponent<TextMeshProUGUI>().text = c_title;
+            if (i == 0) PhraseObjects[PhraseObjects.Count - 1].transform.GetChild(i).GetComponent<TextMeshProUGUI>().text = c_kana;
+            // Make special command for kanji.
+            else if (i == 1)
+            {
+                ExtendText(c_kanji, PhraseObjects[PhraseObjects.Count - 1].transform.GetChild(i).gameObject, 20);
+                // PhraseObjects[PhraseObjects.Count-1].transform.GetChild(i).GetComponent<TextMeshProUGUI>().text = c_kanji;
+            }
+            else if (i == 2) PhraseObjects[PhraseObjects.Count - 1].transform.GetChild(i).GetComponent<TextMeshProUGUI>().text = c_author;
+            else if (i == 3) 
+            {
+                ExtendText(c_title, PhraseObjects[PhraseObjects.Count - 1].transform.GetChild(i).gameObject, 6);
+                // PhraseObjects[PhraseObjects.Count - 1].transform.GetChild(i).GetComponent<TextMeshProUGUI>().text = c_title;
+            }
         }
         // Make one Phrase GameObject and place values inside.
         // phraseObject = Instantiate(PhraseTemplate, transform);
@@ -168,7 +182,7 @@ public class FrontDisplayController : MonoBehaviour
         //     else if (i == 3) phraseObject.transform.GetChild(i).GetComponent<TextMeshProUGUI>().text = c_title;
         // }
         // Removes content if list is 4 or more
-        
+
         // Save to List of GameObjects
         // PhraseObjects.Add(phraseObject);
         // PhraseObjects.Insert(0, phraseObject);
@@ -178,11 +192,45 @@ public class FrontDisplayController : MonoBehaviour
         {
             coroutine = StartCoroutine(HighLightPhrasesI(rhymePos_c, rhymePos_p));
         }
-        else {
+        else
+        {
             yield return new WaitForSeconds(0.2f);
             isBusy = false;
         }
         yield return null;
+    }
+
+    void ExtendText(string s, GameObject textObject, int maxChar)
+    {
+        int charCount = s.Length;
+        Debug.Log("There are " + charCount + " characters in the sentence");
+        int arrIndexCount = charCount / maxChar;
+        string[] sArr = new string[arrIndexCount+1];
+        GameObject cloneObject = textObject;
+
+        // Divide string per 20 characters.
+        for (int i = 0; i < sArr.Length; i++)
+        {
+            if (s.Length - ((i) * maxChar) > maxChar) sArr[i] = s.Substring(i * maxChar, maxChar);
+            else sArr[i] = s.Substring(i * maxChar, s.Length - ((i) * maxChar));
+            Debug.Log("string sArr index value: " + sArr[i]);
+        }
+
+        textObject.GetComponent<TextMeshProUGUI>().text = sArr[0];
+
+        if (sArr.Length > 1)
+        {
+            for (int i = 1; i < sArr.Length; i++)
+            {
+                cloneObject = Instantiate(textObject, textObject.transform.position, Quaternion.identity, textObject.transform.parent);
+                cloneObject.GetComponent<TextMeshProUGUI>().text = sArr[i];
+                cloneObject.GetComponent<RectTransform>().anchoredPosition = new Vector2(
+                    textObject.GetComponent<RectTransform>().anchoredPosition.x - ((i) * textObject.GetComponent<RectTransform>().sizeDelta.x),
+                    textObject.GetComponent<RectTransform>().anchoredPosition.y
+                );
+            }
+        }
+        return;
     }
 
     IEnumerator HighLightPhrasesI(string pos, string pos_p)
@@ -206,8 +254,8 @@ public class FrontDisplayController : MonoBehaviour
         Color32 c0 = GetColorPreset();
         yield return new WaitForSeconds(0.1f);
         // Reason: color changes immediately if moved.
-        ColorText(PhraseObjects[PhraseObjects.Count-1].transform.GetChild(0).GetComponent<TextMeshProUGUI>(), pos_i[0], pos_i[1], c0);
-        ColorText(PhraseObjects[PhraseObjects.Count-2].transform.GetChild(0).GetComponent<TextMeshProUGUI>(), posp_i[0], posp_i[1], c0);
+        ColorText(PhraseObjects[PhraseObjects.Count - 1].transform.GetChild(0).GetComponent<TextMeshProUGUI>(), pos_i[0], pos_i[1], c0);
+        ColorText(PhraseObjects[PhraseObjects.Count - 2].transform.GetChild(0).GetComponent<TextMeshProUGUI>(), posp_i[0], posp_i[1], c0);
 
 
         Debug.Log("Done animating the phrase");
@@ -235,12 +283,12 @@ public class FrontDisplayController : MonoBehaviour
 
     void ColorText(TextMeshProUGUI tm, int from, int to, Color32 c)
     {
-        Debug.Log("Coloring from: " + from + " to "+ to);
+        Debug.Log("Coloring from: " + from + " to " + to);
         TMP_TextInfo textInfo = tm.textInfo;
         int currentCharacter = 0;
 
         Color32[] newVertexColors;
-        
+
 
         for (int i = from; i <= to; i++)
         {

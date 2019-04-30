@@ -8,7 +8,7 @@ public class SerialHandler : MonoBehaviour
 	public delegate void SerialDataReceivedEventHandler(string message);
 	public event SerialDataReceivedEventHandler OnDataReceived;
 
-	public string portName = "/dev/cu.usbmodem14201"; // ポート名(Macだと/dev/tty.usbmodem1421など)
+	public string portName = "/dev/cu.usbmodem144101"; // ポート名(Macだと/dev/tty.usbmodem1421など)
 	public int baudRate    = 115200;  // ボーレート(Arduinoに記述したものに合わせる)
 
 	private SerialPort serialPort_;
